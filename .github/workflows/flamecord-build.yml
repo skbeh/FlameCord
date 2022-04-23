@@ -21,6 +21,8 @@ jobs:
     # Checkout repository
     - name: Checkout Repository
       uses: actions/checkout@v3
+      with:
+        submodules: true
 
     # Setup a version of the Java JDK
     - name: Setup JAVA ${{ matrix.java }}
@@ -38,11 +40,11 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
 
-    - uses: fregante/setup-git-user@v1
-
     # Start building FlameCord
     - name: Build FlameCord
       run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
         scripts/build.sh --jar
 
     # An artifact is generated in a compressed file according to each JDK build version.
