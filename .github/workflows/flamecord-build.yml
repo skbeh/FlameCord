@@ -4,7 +4,11 @@
 # if the change is working properly.
 name: FlameCord Build (master)
 
-on: [push]
+on:
+  push:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -29,7 +33,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: ${{ matrix.java }}
-        distribution: 'adopt'
+        distribution: 'temurin'
         architecture: x64
 
     # The corresponding dependencies are stored in the cache to speed up the test.
