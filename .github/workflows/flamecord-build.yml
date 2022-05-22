@@ -52,7 +52,7 @@ jobs:
     - name: Remove bad limit
       run: |
         cd Waterfall-Proxy-Patches
-        sed '/private Collection<String> antibotCountryBlacklist/c private Collection<String> antibotCountryBlacklist = new ArrayList<String>()' 00??-Antibot-System.patch
+        sed -i '/private Collection<String> antibotCountryBlacklist/c +private Collection<String> antibotCountryBlacklist = new ArrayList<String>();' 00??-Antibot-System.patch
 
     # Start building FlameCord
     - name: Build FlameCord
