@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     # The corresponding tests are performed in the versions
     # marked as Long Term Support by Oracle and in its
@@ -26,6 +26,7 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
       with:
+        repository: 2lstudios-mc/FlameCord
         submodules: true
 
     # Setup a version of the Java JDK
@@ -34,7 +35,11 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
         distribution: 'temurin'
-        architecture: x64
+
+    - name: Setup build dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y maven
 
     # The corresponding dependencies are stored in the cache to speed up the test.
     - name: Cache Maven Packages
@@ -44,11 +49,16 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
 
+    - name: Remove bad limit
+      run: |
+        cd Waterfall-Proxy-Patches
+        sed '/private Collection<String> antibotCountryBlacklist/c private Collection<String> antibotCountryBlacklist = new ArrayList<String>()' 00??-Antibot-System.patch
+
     # Start building FlameCord
     - name: Build FlameCord
       run: |
         git config --global user.name 'github-actions[bot]'
-        git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+        git config --global user.email 'actions@github.com'
         scripts/build.sh --jar
 
     # An artifact is generated in a compressed file according to each JDK build version.
